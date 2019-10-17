@@ -1,0 +1,34 @@
+'/generate_checksum':
+			console.log("HERE")
+			if (request.method == 'POST') {
+				var OrderId = generateOrderId();
+				var paramarray = {};
+				paramarray['MID'] = 'XXXXXXXXXXXXXXXXXX'; //Provided by Paytm after making merchant account
+				paramarray['ORDER_ID'] = OrderId; //unique OrderId for every request
+				paramarray['CUST_ID'] = 'XYZ';  // unique customer identifier 
+				paramarray['INDUSTRY_TYPE_ID'] = 'Retail'; //for staging use Retail else for production paytm provide this
+				paramarray['CHANNEL_ID'] = 'WAP'; //"WAP" for android integration "WEB" for website integration
+				paramarray['TXN_AMOUNT'] = '1.00'; // transaction amount,must contain only two decimal places
+				paramarray['WEBSITE'] = 'APPSTAGING'; //for staging use this else provided by paytm
+				paramarray['CALLBACK_URL'] = 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + OrderId;//for staging use this else for production provide by paytm
+				paytm_checksum.genchecksum(paramarray, paytm_config.MERCHANT_KEY, function (err, checksum) {
+					console.log('Checksum: ', checksum, "\n");
+					response.writeHead(200, { 'Content-type': 'text/json', 'Cache-Control': 'no-cache' });
+					var json = {
+						'MID': 'XXXXXXXXXXXXX',
+						'ORDER_ID': OrderId,
+						'CUST_ID': '234567',
+						'INDUSTRY_TYPE_ID': 'Retail',
+						'CHANNEL_ID': 'WAP',
+						'TXN_AMOUNT': '1.00',
+						'WEBSITE': 'APPSTAGING',
+						'CALLBACK_URL': 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + OrderId,
+						'CHECKSUMHASH': checksum
+				  response.write(JSON.stringify(json));
+					response.end();
+				});
+			} else {
+				response.writeHead(200, { 'Content-type': 'text/json' });
+				response.end();
+			}
+			break;
