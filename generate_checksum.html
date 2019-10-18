@@ -11,11 +11,21 @@ if(request.method == 'POST'){
 				paramarray['EMAIL'] = 'abc@gmail.com'; // customer email id
 				paramarray['MOBILE_NO'] = '9999999999'; // customer 10 digit mobile no.
 					paytm_checksum.genchecksum(paramarray, paytm_config.MERCHANT_KEY, function (err, checksum) {
-						console.log('Checksum: ', checksum, "\n");
-						response.writeHead(200, {'Content-type' : 'text/json','Cache-Control': 'no-cache'});
-						response.write(JSON.stringify(checksum));
-						response.end();
-					});
+					console.log('Checksum: ', checksum, "\n");
+					response.writeHead(200, { 'Content-type': 'text/json', 'Cache-Control': 'no-cache' });
+					var json = {
+						'MID': 'XXXXXXXXXXXXX',
+						'ORDER_ID': OrderId,
+						'CUST_ID': '234567',
+						'INDUSTRY_TYPE_ID': 'Retail',
+						'CHANNEL_ID': 'WAP',
+						'TXN_AMOUNT': '1.00',
+						'WEBSITE': 'Retail',
+						'CALLBACK_URL': 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + OrderId,
+						'CHECKSUMHASH': checksum
+				  response.write(JSON.stringify(json));
+					response.end();
+				});
 			}else{
 				response.writeHead(200, {'Content-type' : 'text/json'});
 				response.end();
